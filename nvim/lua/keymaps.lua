@@ -52,3 +52,14 @@ vim.keymap.set({"i", "s"}, "<C-E>", function()
 		ls.change_choice(1)
 	end
 end, {silent = true})
+
+
+
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'tex',
+  callback = function()
+    vim.keymap.set('n', '<leader>v', ':VimtexView<CR>', { buffer = true, silent = true })
+  end,
+})
+

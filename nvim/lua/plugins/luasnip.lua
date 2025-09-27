@@ -5,6 +5,11 @@ local M = {
 	-- install jsregexp (optional!).
 	build = "make install_jsregexp",
     lazy = false,
+   
+   config = function()
+    require("luasnip.loaders.from_vscode").lazy_load()
+   end,
+
     cmd = "LuaSnip"
 }
 

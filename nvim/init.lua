@@ -37,3 +37,11 @@ vim.cmd [[
 vim.cmd [[
   autocmd FileType mccode source ~/.config/nvim/syntax/mccode.vim
 ]]
+
+vim.api.nvim_create_augroup('VimtexAutoView', {})
+vim.api.nvim_create_autocmd('User', {
+  group = 'VimtexAutoView',
+  pattern = 'VimtexEventCompileSuccess',
+  command = 'VimtexView',
+})
+
