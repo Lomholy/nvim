@@ -13,6 +13,8 @@
 " McStas/McXtrace instruments are mostly c syntax so start with that
 :runtime! syntax/c.vim
 
+:setlocal commentstring=//\ %s
+
 "keywords for mcstas statements
 :syntax keyword instrStatement DECLARE DEPENDENCY DEFINE END FINALLY INITIALIZE MCDISPLAY SAVE SHARE USERVARS
 :syntax keyword instrStatement TRACE DEFINITION PARAMETERS POLARISATION SETTING STATE
