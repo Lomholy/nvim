@@ -201,13 +201,11 @@ end
 
 
 local uv = vim.uv or vim.loop
--- Path to the McStas language server (VS_for_McStas/server/src/server.ts); override with $MCSTAS_LSP_SERVER
-local mcstas_server = vim.env.MCSTAS_LSP_SERVER
-  or '/Users/tqv636/Phd/Projects/McStas_dev/VS_for_McStas/server/src/server.ts'
+-- McStas language server from Lomholy/VS_for_McStas (server/python), see README
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'mccode',
   callback = function(args)
-    if vim.fn.executable('npx') == 0 or not uv.fs_stat(mcstas_server) then return end
+    if vim.fn.executable('mcstas-language-server') == 0 then return end
 
     local bufnr = args.buf
     local fname = vim.api.nvim_buf_get_name(bufnr)
@@ -224,7 +222,7 @@ vim.api.nvim_create_autocmd('FileType', {
   
     vim.lsp.start({
       name = 'mcstas_language_server',  -- use a stable, lowercase, no-space name
-      cmd = { 'npx', 'ts-node', mcstas_server },
+      cmd = { 'mcstas-language-server' },
       root_dir = root,
       on_init = function(client, init_result)
       end,
