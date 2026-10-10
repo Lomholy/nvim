@@ -83,6 +83,7 @@ local plugins = {
 	{ "mason-org/mason-lspconfig.nvim" }, -- links installed to configured
 	{ "stevearc/conform.nvim" }, -- Formatting where the LSP doesn't
   { "lewis6991/gitsigns.nvim" },
+  {"MeanderingProgrammer/render-markdown.nvim"},
 
 	{
 		"saghen/blink.cmp", -- Blink completion tool (LSP, snippets etc)
@@ -138,14 +139,13 @@ require("telescope").setup() -- command menu
 -- -----------------------------------------------------------------------------------------------
 -- NB: Make sure to add more from this list!
 -- https://github.com/nvim-treesitter/nvim-treesitter/tree/master#supported-languages
-require("nvim-treesitter.configs").setup({
-	ensure_installed = { "typescript", "python", "rust", "go" },
-	sync_install = false,
-	auto_install = true,
-	highlight = { enable = true },
+require("nvim-treesitter").install({ "typescript", "python", "rust", "go" })
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "typescript", "python", "rust", "go" },
+	callback = function() vim.treesitter.start() end,
 })
 vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99
 
 -- -----------------------------------------------------------------------------------------------
