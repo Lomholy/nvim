@@ -72,7 +72,7 @@ local plugins = {
 
 	-- Telescope command menu
 	{ "nvim-telescope/telescope.nvim" },
-	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = vim.fn.executable("make") == 1 },
 
 	-- TreeSitter
 	{ "nvim-treesitter/nvim-treesitter", priority = 1000, build = ":TSUpdate" },
@@ -83,6 +83,7 @@ local plugins = {
 	{ "mason-org/mason-lspconfig.nvim" }, -- links installed to configured
 	{ "stevearc/conform.nvim" }, -- Formatting where the LSP doesn't
   { "lewis6991/gitsigns.nvim" },
+  {"MeanderingProgrammer/render-markdown.nvim"},
 
 	{
 		"saghen/blink.cmp", -- Blink completion tool (LSP, snippets etc)
@@ -91,8 +92,7 @@ local plugins = {
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
 
-		version = "1.*",
-		build = "cargo build --release",
+		version = "1.*", -- release tags ship a prebuilt fuzzy matcher, so no Rust toolchain is needed
 		opts = {
 			keymap = { preset = "enter" },
 			appearance = {
@@ -138,14 +138,16 @@ require("telescope").setup() -- command menu
 -- -----------------------------------------------------------------------------------------------
 -- NB: Make sure to add more from this list!
 -- https://github.com/nvim-treesitter/nvim-treesitter/tree/master#supported-languages
-require("nvim-treesitter.configs").setup({
-	ensure_installed = { "typescript", "python", "rust", "go" },
-	sync_install = false,
-	auto_install = true,
-	highlight = { enable = true },
+-- Building parsers needs the tree-sitter CLI and a C compiler
+if vim.fn.executable("tree-sitter") == 1 then
+	require("nvim-treesitter").install({ "typescript", "python", "rust", "go" })
+end
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "typescript", "python", "rust", "go" },
+	callback = function() pcall(vim.treesitter.start) end, -- parser may still be installing on first launch
 })
 vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99
 
 -- -----------------------------------------------------------------------------------------------
@@ -199,10 +201,12 @@ end
 
 
 local uv = vim.uv or vim.loop
+-- McStas language server from Lomholy/VS_for_McStas (server/python), see README
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'mccode',
   callback = function(args)
-    
+    if vim.fn.executable('mcstas-language-server') == 0 then return end
+
     local bufnr = args.buf
     local fname = vim.api.nvim_buf_get_name(bufnr)
     local root = (fname ~= '' and vim.fs.dirname(fname)) or uv.cwd()
@@ -218,7 +222,7 @@ vim.api.nvim_create_autocmd('FileType', {
   
     vim.lsp.start({
       name = 'mcstas_language_server',  -- use a stable, lowercase, no-space name
-      cmd = { 'npx', 'ts-node', '/Users/tqv636/Phd/Projects/McStas_dev/VS_for_McStas/server/src/server.ts' },
+      cmd = { 'mcstas-language-server' },
       root_dir = root,
       on_init = function(client, init_result)
       end,
