@@ -157,10 +157,16 @@ vim.opt.foldlevel = 99
 -- NB: Make sure to add more from this list!
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 require("mason").setup()
-require("mason-lspconfig").setup({ ensure_installed = {
-	"eslint",
-	"ruff",
-} })
+require("mason-lspconfig").setup({
+	ensure_installed = {
+		"eslint",
+		"ruff",
+	},
+	-- Never start spell-checking servers, even if installed through Mason
+	automatic_enable = {
+		exclude = { "ltex", "ltex_plus", "harper_ls", "typos_lsp", "cspell_ls", "codebook" },
+	},
+})
 
 require("conform").setup({
 	default_format_opts = { lsp_format = "fallback" }, -- Many languages can be formatted directly by their LSP
