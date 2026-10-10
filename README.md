@@ -39,7 +39,9 @@ Optional (the config starts without them, but the matching feature is off):
 xcode-select --install
 brew install neovim tree-sitter-cli ripgrep node python pipx
 brew install --cask font-jetbrains-mono-nerd-font
-brew install --cask mactex-no-gui skim
+brew install --cask basictex skim
+sudo /Library/TeX/texbin/tlmgr update --self
+sudo /Library/TeX/texbin/tlmgr install latexmk
 ```
 
 ### Debian/Ubuntu
@@ -64,6 +66,7 @@ Get the `tree-sitter` CLI from its [releases page](https://github.com/tree-sitte
 - vimtex finds the main file by itself. If it picks the wrong one, put `% !TEX root = main.tex` on the first line of the sub-file.
 - `\ll` toggles compilation, `\lv` jumps to the cursor position in the PDF, `\le` shows errors, `\lt` opens the table of contents. See `:help vimtex-default-mappings`.
 - The viewer is Skim on macOS, and Zathura on Linux (`zathura_simple` when `xdotool` is missing, e.g. on Wayland).
+- BasicTeX on macOS has only a small set of packages. When a build fails with ``File `foo.sty' not found``, run `sudo tlmgr install foo` (`tlmgr search --global --file foo.sty` finds the package name if it differs).
 
 Jumping from the PDF back to the source:
 
