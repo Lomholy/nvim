@@ -85,9 +85,36 @@ local plugins = {
   { "lewis6991/gitsigns.nvim" },
   {"MeanderingProgrammer/render-markdown.nvim"},
 
+	-- LaTeX
+	{
+		"lervag/vimtex", -- compiling with latexmk, PDF viewer sync, motions and text objects
+		lazy = false, -- vimtex must not be lazy-loaded
+		init = function()
+			if vim.fn.has("mac") == 1 then
+				vim.g.vimtex_view_method = "skim"
+			else
+				vim.g.vimtex_view_method = vim.fn.executable("xdotool") == 1 and "zathura" or "zathura_simple"
+			end
+		end,
+	},
+	{
+		"L3MON4D3/LuaSnip", -- snippet engine
+		version = "v2.*",
+		dependencies = { "rafamadriz/friendly-snippets" },
+		config = function()
+			require("luasnip").config.setup({ enable_autosnippets = true })
+			require("luasnip.loaders.from_vscode").lazy_load() -- friendly-snippets
+		end,
+	},
+	{
+		"iurimateus/luasnip-latex-snippets.nvim", -- math autosnippets (mk, ff, //, ...)
+		dependencies = { "L3MON4D3/LuaSnip", "lervag/vimtex" },
+		config = function() require("luasnip-latex-snippets").setup() end,
+	},
+
 	{
 		"saghen/blink.cmp", -- Blink completion tool (LSP, snippets etc)
-		dependencies = { "rafamadriz/friendly-snippets" },
+		dependencies = { "L3MON4D3/LuaSnip" },
 
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
@@ -95,6 +122,7 @@ local plugins = {
 		version = "1.*", -- release tags ship a prebuilt fuzzy matcher, so no Rust toolchain is needed
 		opts = {
 			keymap = { preset = "enter" },
+			snippets = { preset = "luasnip" },
 			appearance = {
 				-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
 				-- Adjusts spacing to ensure icons are aligned
@@ -161,6 +189,7 @@ require("mason-lspconfig").setup({
 	ensure_installed = {
 		"eslint",
 		"ruff",
+		"texlab",
 	},
 	-- Never start spell-checking servers, even if installed through Mason
 	automatic_enable = {
@@ -180,6 +209,17 @@ require("conform").setup({
 		css = { "prettier" },
     python = { "isort", "black" },
 	},
+})
+
+
+-- ----------------------------------------------------------------------------
+-- LaTeX
+-- ----------------------------------------------------------------------------
+-- Start latexmk in continuous mode when a project opens. It rebuilds the main
+-- document whenever any file it includes is saved. \ll toggles it.
+vim.api.nvim_create_autocmd("User", {
+	pattern = "VimtexEventInitPost",
+	command = "VimtexCompile!",
 })
 
 
