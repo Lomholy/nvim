@@ -139,6 +139,12 @@ require("telescope").setup() -- command menu
 -- NB: Make sure to add more from this list!
 -- https://github.com/nvim-treesitter/nvim-treesitter/tree/master#supported-languages
 -- Building parsers needs the tree-sitter CLI and a C compiler
+-- On macOS, build with Apple's clang even when a conda env has set CC
+-- (tree-sitter reads CC_<target> before CC)
+if vim.fn.has("mac") == 1 and vim.fn.executable("/usr/bin/clang") == 1 then
+	vim.env.CC_aarch64_apple_darwin = "/usr/bin/clang"
+	vim.env.CC_x86_64_apple_darwin = "/usr/bin/clang"
+end
 if vim.fn.executable("tree-sitter") == 1 then
 	require("nvim-treesitter").install({ "typescript", "python", "rust", "go" })
 end
