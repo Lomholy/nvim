@@ -15,7 +15,7 @@ nvim
 
 Required:
 
-- Neovim 0.12+
+- Neovim 0.12.4+ (required by vimtex)
 - `git`, `curl`, `tar`, and a C compiler with `make`
 
 Optional (the config starts without them, but the matching feature is off):
