@@ -82,7 +82,7 @@ Completion and snippets:
 
 ## McStas
 
-`.instr` files open with the `mccode` syntax in `syntax/mccode.vim`. The McStas language server (hover and completion) starts when `mcstas-language-server` is on `PATH`. Install it from [VS_for_McStas](https://github.com/Lomholy/VS_for_McStas):
+`.instr` and `.comp` files open with the `mccode` syntax in `syntax/mccode.vim`. The McStas language server (hover and completion) starts when `mcstas-language-server` is on `PATH`. Install it from [VS_for_McStas](https://github.com/Lomholy/VS_for_McStas):
 
 ```sh
 pipx install "git+https://github.com/Lomholy/VS_for_McStas#subdirectory=server/python"

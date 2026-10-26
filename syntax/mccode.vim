@@ -11,7 +11,11 @@
 ""  when opening a *.instr (or *.comp) -file
 
 " McStas/McXtrace instruments are mostly c syntax so start with that
+" allow {...} inside (...), e.g. vector defaults in PARAMETERS and MPI_MASTER({ ... })
+:let s:had_no_curly = exists("g:c_no_curly_error")
+:let g:c_no_curly_error = 1
 :runtime! syntax/c.vim
+:if !s:had_no_curly | unlet g:c_no_curly_error | endif
 
 :setlocal commentstring=//\ %s
 
@@ -98,7 +102,7 @@
 highlight link instrTrace Statement
 
 "mcstas type keywords
-:syntax keyword instrType auto char const double float int long register restrict short signed static unsigned void volatile _Imaginary _Complex _Bool
+:syntax keyword instrType auto char const double float int long register restrict short signed static unsigned void volatile _Imaginary _Complex _Bool string vector
 highlight link instrType Type
 
 "mcstas attention keywords 
