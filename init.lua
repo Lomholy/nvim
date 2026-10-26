@@ -236,6 +236,7 @@ vim.api.nvim_create_autocmd("User", {
 vim.filetype.add({
   extension = {
     instr = 'mccode',
+    comp = 'mccode',
   },
 })
 
